@@ -27,19 +27,34 @@ if (-not (az ad sp list --filter "appId eq '$appId'" --query "[0].id" -o tsv)) {
 $spId = az ad sp list --filter "appId eq '$appId'" --query "[0].id" -o tsv
 
 # 2. Federated credential: only workflow runs on $Repo / $Branch can get a token.
-$subject = "repo:${Repo}:ref:refs/heads/$Branch"
-$existing = az ad app federated-credential list --id $appId --query "[?subject=='$subject'].name" -o tsv
-if (-not $existing) {
-    $fic = Join-Path $env:TEMP "fic.json"
-    @{
-        name      = "github-$($Branch -replace '[^a-zA-Z0-9-]', '-')"
-        issuer    = "https://token.actions.githubusercontent.com"
-        subject   = $subject
-        audiences = @("api://AzureADTokenExchange")
-    } | ConvertTo-Json | Set-Content $fic -Encoding ascii
-    az ad app federated-credential create --id $appId --parameters "@$fic" -o none
-    Remove-Item $fic
-    Write-Host "Added federated credential for $subject"
+# GitHub may present either the name-based subject or the ID-based one
+# (repo:owner@ownerId/repo@repoId:...), so register both.
+$owner, $name = $Repo.Split("/")
+$ids = gh api "repos/$Repo" --jq '"\(.owner.id) \(.id)"' 2>$null
+if ($LASTEXITCODE -or -not $ids) {
+    $ids = Read-Host "Enter '<ownerId> <repoId>' for $Repo (gh api repos/$Repo --jq '.owner.id, .id')"
+}
+$ownerId, $repoId = $ids.Split(" ")
+$branchName = $Branch -replace '[^a-zA-Z0-9-]', '-'
+$subjects = [ordered]@{
+    "github-$branchName"     = "repo:${Repo}:ref:refs/heads/$Branch"
+    "github-$branchName-ids" = "repo:$owner@$ownerId/$name@${repoId}:ref:refs/heads/$Branch"
+}
+foreach ($credName in $subjects.Keys) {
+    $subject  = $subjects[$credName]
+    $existing = az ad app federated-credential list --id $appId --query "[?subject=='$subject'].name" -o tsv
+    if (-not $existing) {
+        $fic = Join-Path $env:TEMP "fic.json"
+        @{
+            name      = $credName
+            issuer    = "https://token.actions.githubusercontent.com"
+            subject   = $subject
+            audiences = @("api://AzureADTokenExchange")
+        } | ConvertTo-Json | Set-Content $fic -Encoding ascii
+        az ad app federated-credential create --id $appId --parameters "@$fic" -o none
+        Remove-Item $fic
+        Write-Host "Added federated credential for $subject"
+    }
 }
 
 # 3. Least privilege: blob write on this one storage account only.
