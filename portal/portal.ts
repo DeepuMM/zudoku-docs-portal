@@ -13,22 +13,10 @@ export type Section = {
 
 export type Registry = { portalUrl: string; sections: Section[] };
 
-// The registry lives in the hub repo; PortCo builds fetch the latest copy.
-export const REGISTRY_URL =
-  "https://raw.githubusercontent.com/DeepuMM/zudoku-docs-portal/main/sections.json";
-
-export const loadRegistry = async (fallback: Registry): Promise<Registry> => {
-  try {
-    const res = await fetch(REGISTRY_URL);
-    if (res.ok) return (await res.json()) as Registry;
-  } catch {
-    // offline: fall back to the local copy
-  }
-  return fallback;
-};
-
-const portalBase = (registry: Registry) =>
-  (process.env.PORTAL_URL ?? registry.portalUrl).replace(/\/+$/, "");
+// zudoku.config.tsx is also bundled into the browser app, so nothing here may
+// use Node APIs. Sites import sections.json as a module; PortCo repos refresh
+// their copy from the hub before each build (scripts/sync-sections.mjs).
+const portalBase = (registry: Registry) => registry.portalUrl.replace(/\/+$/, "");
 
 // Which section owns a pathname: the longest matching section path.
 const ownerOf = (sections: Section[], pathname: string) =>

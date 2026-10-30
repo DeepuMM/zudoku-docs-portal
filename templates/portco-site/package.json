@@ -4,7 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "sync-sections": "node scripts/sync-sections.mjs",
+    "predev": "node scripts/sync-sections.mjs",
     "dev": "zudoku dev",
+    "prebuild": "node scripts/sync-sections.mjs",
     "build": "zudoku build",
     "preview": "zudoku preview"
   },

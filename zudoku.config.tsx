@@ -1,10 +1,10 @@
-import { readFileSync } from "node:fs";
 import type { ZudokuConfig } from "zudoku";
 import { portalConfig, type Registry } from "./portal/portal";
+import sections from "./sections.json";
 
 // The hub owns sections.json (the list of PortCo sections) and publishes the
 // site root. Each PortCo publishes its own section from its own repo.
-const registry: Registry = JSON.parse(readFileSync("sections.json", "utf8"));
+const registry: Registry = sections;
 
 const config: ZudokuConfig = {
   ...portalConfig(registry, "datax"),

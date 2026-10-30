@@ -1,0 +1,4 @@
+{
+  "portalUrl": "__PORTAL_URL__",
+  "sections": [{ "id": "__ID__", "label": "__LABEL__", "path": "/__ID__/" }]
+}
