@@ -1,0 +1,26 @@
+{
+  "portalUrl": "https://stzudokudocs20683.z23.web.core.windows.net",
+  "sections": [
+    {
+      "id": "datax",
+      "label": "DataX (Platform)",
+      "path": "/",
+      "description": "Enterprise AI agent platform architecture",
+      "repo": "DeepuMM/zudoku-docs-portal"
+    },
+    {
+      "id": "scb",
+      "label": "SCB",
+      "path": "/scb/",
+      "description": "SCB agents and onboarding",
+      "repo": "DeepuMM/portal-scb"
+    },
+    {
+      "id": "cardx",
+      "label": "CardX",
+      "path": "/cardx/",
+      "description": "CardX agents and onboarding",
+      "repo": "DeepuMM/portal-cardx"
+    }
+  ]
+}

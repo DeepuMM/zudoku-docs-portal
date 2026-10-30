@@ -1,0 +1,36 @@
+---
+title: PortCo sections
+---
+
+import registry from "../sections.json";
+
+Each PortCo owns a section of this portal. A section's content lives in that
+PortCo's own repo, and its pipeline publishes it to the section's folder
+independently of everyone else. Use the **PortCos** menu in the header to move
+between sections.
+
+<table>
+  <thead>
+    <tr><th>Section</th><th>About</th><th>Source repo</th></tr>
+  </thead>
+  <tbody>
+    {registry.sections.map((s) => (
+      <tr key={s.id}>
+        <td><a href={`${registry.portalUrl}${s.path}`}>{s.label}</a></td>
+        <td>{s.description}</td>
+        <td>{s.repo ? <a href={`https://github.com/${s.repo}`}>{s.repo}</a> : "—"}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+## Adding a PortCo
+
+1. Add an entry to `sections.json` in the hub repo and merge it. The hub
+   redeploys and the new section appears in this list and the header menu.
+2. Run `scripts/new-portco.ps1 -Id <id> -Label <name>` to scaffold the PortCo's
+   repo from the template, then push it to GitHub.
+3. Run `scripts/onboard-portco.ps1 -Id <id> -Repo <owner/repo>` to create the
+   PortCo's deploy identity. It can only write to its own `<id>/` folder.
+
+See [the portal design](/architecture/docs-portal) for the full solution.

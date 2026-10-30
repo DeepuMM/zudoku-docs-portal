@@ -179,6 +179,21 @@ Inside a section, navigation happens in the browser. But when a reader opens `/s
 5. **PortCo:** merges its first content; the pipeline publishes `/<portco>/`.
 6. **Other sections:** pick up the new top-bar link when they upgrade the preset.
 
+## Sandbox implementation
+
+A working version runs in `scbx-testing`, on the public static website endpoint (no private endpoint or Application Gateway yet). It simplifies two parts of the design:
+
+- **Section registry instead of a preset release.** The hub repo's `sections.json` lists every section. The hub reads it directly; PortCo builds fetch the latest copy from the hub repo at build time. Adding a PortCo is one change to `sections.json`, and other sections show it after their next build.
+- **Shared code is copied, not packaged.** `portal/portal.ts` (base path, PortCos header menu, full page load for cross-section links) is copied into each PortCo repo by the scaffold script. It moves to `@datax/docs-preset` once it settles.
+
+| Piece | Where |
+|---|---|
+| Hub site, `sections.json`, `/` | `DeepuMM/zudoku-docs-portal`, pipeline `.github/workflows/deploy.yml` |
+| PortCo starter | `templates/portco-site/` in the hub repo |
+| Scaffold a PortCo repo | `scripts/new-portco.ps1 -Id <id> -Label <name>` |
+| Deploy identity, folder-scoped write, repo variables | `scripts/onboard-portco.ps1 -Id <id> -Repo <owner/repo>` |
+| Hub deploy identity | `scripts/setup-github-oidc.ps1` |
+
 ## Governance
 
 | Area | Rule |

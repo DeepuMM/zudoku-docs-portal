@@ -1,0 +1,65 @@
+# Builds this PortCo's section and publishes it to its own folder (/__ID__/) of
+# the portal's storage static website. The deploy identity can only write
+# under __ID__/ (see scripts/onboard-portco.ps1 in the hub repo).
+name: Deploy section
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-section
+  cancel-in-progress: false
+
+env:
+  SECTION: __ID__
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # The build nests the site under dist/<section>/ (its base path). Take
+      # that folder and add extensionless copies of each page so direct links like /__ID__/welcome work.
+      - name: Stage files
+        run: |
+          mkdir -p stage/site stage/routes
+          rsync -a "dist/$SECTION/" stage/site/
+          cd stage/site
+          find . -name '*.html' ! -name index.html | while read -r f; do
+            base="${f%.html}"
+            if [ -d "$base" ]; then dest="../routes/$base/index.html"; else dest="../routes/$base"; fi
+            mkdir -p "$(dirname "$dest")"
+            cp "$f" "$dest"
+          done
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Upload to $web/${{ env.SECTION }}/
+        env:
+          ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
+        run: |
+          az storage blob upload-batch --account-name "$ACCOUNT" --auth-mode login \
+            -d '$web' --destination-path "$SECTION" -s stage/site --overwrite -o none
+          az storage blob upload-batch --account-name "$ACCOUNT" --auth-mode login \
+            -d '$web' --destination-path "$SECTION" -s stage/routes --overwrite \
+            --content-type "text/html; charset=utf-8" -o none
+          echo "Published to \$web/$SECTION/ on $ACCOUNT" >> "$GITHUB_STEP_SUMMARY"

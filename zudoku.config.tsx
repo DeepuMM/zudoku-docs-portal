@@ -1,16 +1,13 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import type { ZudokuConfig } from "zudoku";
+import { portalConfig, type Registry } from "./portal/portal";
 
-// Each team's repo is checked out into pages/<team>/ and ships a nav.json
-// that becomes its own top-level tab.
-const teamSections = readdirSync("pages", { withFileTypes: true })
-  .filter((d) => d.isDirectory() && existsSync(`pages/${d.name}/nav.json`))
-  .map((d) => ({
-    type: "category" as const,
-    ...JSON.parse(readFileSync(`pages/${d.name}/nav.json`, "utf8")),
-  }));
+// The hub owns sections.json (the list of PortCo sections) and publishes the
+// site root. Each PortCo publishes its own section from its own repo.
+const registry: Registry = JSON.parse(readFileSync("sections.json", "utf8"));
 
 const config: ZudokuConfig = {
+  ...portalConfig(registry, "datax"),
   site: {
     logo: {
       src: { light: "/logo-light.svg", dark: "/logo-dark.svg" },
@@ -36,7 +33,11 @@ const config: ZudokuConfig = {
         "/architecture/docs-portal",
       ],
     },
-    ...teamSections,
+    {
+      type: "category",
+      label: "PortCos",
+      items: ["/portcos"],
+    },
     {
       type: "category",
       label: "Documentation",
