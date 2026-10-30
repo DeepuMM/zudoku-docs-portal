@@ -1,0 +1,61 @@
+# Builds the site and publishes it to the Azure Storage static website ($web).
+# Azure sign-in uses OIDC; run scripts/setup-github-oidc.ps1 once to create the
+# identity and the repo variables below.
+name: Deploy to Azure Storage
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-storage
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Same staging as scripts/deploy-storage.ps1: drop the SSR bundle and add
+      # extensionless copies of each page so direct links work.
+      - name: Stage files
+        run: |
+          mkdir -p stage/site stage/routes
+          rsync -a --exclude=server dist/ stage/site/
+          cd stage/site
+          find . -name '*.html' ! -name index.html | while read -r f; do
+            base="${f%.html}"
+            if [ -d "$base" ]; then dest="../routes/$base/index.html"; else dest="../routes/$base"; fi
+            mkdir -p "$(dirname "$dest")"
+            cp "$f" "$dest"
+          done
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Upload to $web
+        env:
+          ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
+        run: |
+          az storage blob upload-batch --account-name "$ACCOUNT" --auth-mode login \
+            -d '$web' -s stage/site --overwrite -o none
+          az storage blob upload-batch --account-name "$ACCOUNT" --auth-mode login \
+            -d '$web' -s stage/routes --overwrite --content-type "text/html; charset=utf-8" -o none
+          echo "Published to the \$web container of $ACCOUNT" >> "$GITHUB_STEP_SUMMARY"
