@@ -47,7 +47,7 @@ Each PortCo runs its own AI Gateway and Foundry landing zones in its own Entra t
 - **Connectivity:** a private endpoint to the provider's APIM (manually approved), or a partner endpoint behind a WAF.
 - **Identity:** an Entra multi-tenant app or federated credential, plus an APIM product subscription.
 - **Control:** the provider has a kill switch per consumer.
-- **Tracing:** one correlation ID (W3C `traceparent`) passes through both gateways, so the call is traced end to end in both PortCos' Application Insights, gateway logs, Agent 365 and the DataX central SOC.
+- **Tracing:** one correlation ID (W3C `traceparent`) passes through both gateways, so the call is traced end to end in both PortCos' Application Insights, gateway logs, Agent 365 and the Platform central SOC.
 
 ## Step by step
 

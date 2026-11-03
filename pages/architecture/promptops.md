@@ -3,7 +3,7 @@ title: PromptOps
 description: Capability #5. Every prompt change is versioned, reviewed, tested and reversible.
 ---
 
-Git is the source of truth and the DataX pipeline is the only identity that writes to Foundry. Agent instructions, skills and toolboxes are released together, and the approved versions and hashes feed drift detection.
+Git is the source of truth and the Platform pipeline is the only identity that writes to Foundry. Agent instructions, skills and toolboxes are released together, and the approved versions and hashes feed drift detection.
 
 ## Repository layout
 
@@ -22,7 +22,7 @@ The `agent-config` repository holds:
 2. **Review:** CODEOWNERS approve the pull request. Material changes need extra approvers.
 3. **Merge** to `main`.
 
-Then the DataX pipeline runs:
+Then the Platform pipeline runs:
 
 1. **Validate:** lint, policy checks and hash computation.
 2. **Deploy to dev:** skills, toolbox and agent versions in the dev project.

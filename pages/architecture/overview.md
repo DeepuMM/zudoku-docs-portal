@@ -1,11 +1,11 @@
 ---
 title: Platform overview
-description: The SCBX enterprise AI agent platform, built on Microsoft Foundry and an AI Gateway (Azure API Management).
+description: The enterprise AI agent platform, built on Microsoft Foundry and an AI Gateway (Azure API Management).
 ---
 
-The SCBX AI agent platform lets DataX and the portfolio companies (PortCos) build, run and govern AI agents on Microsoft Foundry, with an AI Gateway built on Azure API Management (APIM) in front of every agent, model and tool.
+The AI agent platform lets Platform and the portfolio companies (PortCos) build, run and govern AI agents on Microsoft Foundry, with an AI Gateway built on Azure API Management (APIM) in front of every agent, model and tool.
 
-DataX builds the platform once and deploys the same **tenant stamp** to every PortCo from code. Each PortCo (for example SCBX, AutoX and CardX) gets its own Entra tenant, subscriptions and network spoke.
+Platform builds the platform once and deploys the same **tenant stamp** to every PortCo from code. Each PortCo (for example PortCo 1, PortCo 2 and PortCo 3) gets its own Entra tenant, subscriptions and network spoke.
 
 ## The platform at a glance
 
@@ -13,10 +13,10 @@ The platform has four parts.
 
 | Part | Owner | What it does |
 |---|---|---|
-| **1. Build and release** | DataX | Agent Builder (Copilot Studio), Microsoft Agent Framework templates, SDK packages, a skill registry, and one shared agent deployment pipeline reused by every portfolio |
+| **1. Build and release** | Platform | Agent Builder (Copilot Studio), Microsoft Agent Framework templates, SDK packages, a skill registry, and one shared agent deployment pipeline reused by every portfolio |
 | **2. Portfolio tenant stamp** | Deployed per tenant from IaC | Developer portal, AI Gateway, Microsoft Foundry, trust and quality controls, and the stamp foundation (network, identity, keys, logs) |
-| **3. Operate and govern** | DataX and the PortCo | Operation control plane, agent RBAC, monitoring, drift detection, audit logging, threat protection, FinOps and kill switches |
-| **4. Multi-tenant deployment** | DataX | The same stamp in every portfolio tenant, plus an enterprise control plane across tenants |
+| **3. Operate and govern** | Platform and the PortCo | Operation control plane, agent RBAC, monitoring, drift detection, audit logging, threat protection, FinOps and kill switches |
+| **4. Multi-tenant deployment** | Platform | The same stamp in every portfolio tenant, plus an enterprise control plane across tenants |
 
 ## Request path
 
@@ -38,8 +38,6 @@ The AI Gateway publishes four APIs:
 Gateway policies apply to every call: token rate limits, semantic caching, load balancing and PTU spill-over, circuit breaker, token metrics for FinOps, the kill switch, and A2A and MCP policies.
 
 ## Inside the tenant stamp
-
-![Zone connectivity](/images/architecture/zone-connectivity.png)
 
 **Microsoft Foundry**
 - One Foundry account per production workload. Non-production shares one account, with a project per use case. Public network access is disabled.
@@ -73,7 +71,7 @@ Infrastructure is defined in Terraform, so the same stamp is deployed to every t
 
 ## Enterprise control plane
 
-Across tenants, DataX uses:
+Across tenants, Platform uses:
 
 - **Agent 365 / API Center** as the enterprise agent registry and admin.
 - **Azure Lighthouse** for delegated cross-tenant operations.

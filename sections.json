@@ -3,23 +3,23 @@
   "sections": [
     {
       "id": "datax",
-      "label": "DataX (Platform)",
+      "label": "Platform",
       "path": "/",
       "description": "Enterprise AI agent platform architecture",
       "repo": "DeepuMM/zudoku-docs-portal"
     },
     {
       "id": "scb",
-      "label": "SCB",
+      "label": "PortCo 1",
       "path": "/scb/",
-      "description": "SCB agents and onboarding",
+      "description": "PortCo 1 agents and onboarding",
       "repo": "DeepuMM/portal-scb"
     },
     {
       "id": "cardx",
-      "label": "CardX",
+      "label": "PortCo 2",
       "path": "/cardx/",
-      "description": "CardX agents and onboarding",
+      "description": "PortCo 2 agents and onboarding",
       "repo": "DeepuMM/portal-cardx"
     }
   ]

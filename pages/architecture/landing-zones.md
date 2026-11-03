@@ -16,8 +16,6 @@ Both are built on the existing Azure landing zone and deployed from the same Ter
 
 ## Foundry landing zone (production)
 
-![Foundry landing zone, production](/images/architecture/foundry-landing-zone-prod.png)
-
 ## Foundry account or project?
 
 A **Foundry account** is the governance and deployment boundary. A **project** is a workspace for one team or use case, not a substitute for an account. Work through the questions in order:
@@ -46,11 +44,9 @@ Prod and non-prod always use separate accounts. Non-prod defaults to one shared 
 
 A documented exception for **production co-location** needs all of the following: the same regulatory scope, data classification, residency and data handling; the same network boundary, DNS namespace and identity boundary; and every owner accepting the shared outage and quota-exhaustion risk.
 
-## Sandbox deployment (scbx-testing)
+## Sandbox deployment
 
-The sandbox is deployed in the `scbx-testing` subscription in Southeast Asia (as of 2026-10-08).
-
-![Sandbox physical deployment](/images/architecture/sandbox-deployment.png)
+The sandbox is deployed in its own subscription in Southeast Asia (as of 2026-10-08).
 
 | Resource group | VNet | Subnets |
 |---|---|---|

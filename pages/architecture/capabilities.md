@@ -3,12 +3,12 @@ title: Capabilities
 description: How the platform delivers each of its capabilities, and the technology it uses.
 ---
 
-Each capability is mapped to how the SCBX AI Platform Design (Draft v0.2, 01/10/2026) achieves it and the technology it uses. The phase comes from section 2 of the design document.
+Each capability is mapped to how the AI Platform Design (Draft v0.2, 01/10/2026) achieves it and the technology it uses. The phase comes from section 2 of the design document.
 
 | # | Capability | Phase | How it is achieved | Technology |
 |---|---|---|---|---|
 | 1 | SDK Management | 2 | Private, versioned SDK feeds with package pipelines and release governance. The SDK adds identity, telemetry, retries and fallback to every call made through the gateway. | Azure Artifacts / GitHub Packages |
-| 2 | Monitoring Framework | 1 | Collects metrics, logs and traces from the gateway, Foundry, models and supporting resources, correlates them with common IDs and raises alerts. Plugs into the existing SCBX central monitoring and PortCo dashboards. | Azure Monitor, Log Analytics, Application Insights, Foundry observability, Diagnostic Settings, Action Groups, Grafana |
+| 2 | Monitoring Framework | 1 | Collects metrics, logs and traces from the gateway, Foundry, models and supporting resources, correlates them with common IDs and raises alerts. Plugs into the existing central monitoring and PortCo dashboards. | Azure Monitor, Log Analytics, Application Insights, Foundry observability, Diagnostic Settings, Action Groups, Grafana |
 | 3 | Operation Control Plane | 2 | One administrative view across agents and services: registry, identity, policy and health. | Agent 365 (preferred); fallback: APIM Developer Portal + Entra Agent ID + Azure Policy + Azure Monitor |
 | 4 | FinOps & CostOps | 2 | Budgets, tags and token usage per team and use case, with chargeback. A custom chargeback layer is needed. | Azure Cost Management, APIM token metrics, Foundry usage in Log Analytics |
 | 5 | PromptOps | 2 | Prompts are versioned, governed, evaluated and can be rolled back. See [PromptOps](/architecture/promptops). | Third-party solution (to be selected) |
